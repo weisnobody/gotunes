@@ -8,6 +8,8 @@ import (
 	"net/url"
 )
 
+var ReturnExtra bool = false
+
 type ItunesSearchRequest struct {
 	Term      string `json:"term"`
 	Country   string `json:"country"`
@@ -38,7 +40,7 @@ func SearchUrl(request ItunesSearchRequest) string {
 	}
 	Url.Path += "/search"
 	parameters := url.Values{}
-	addParameter := func(key String, value String) {
+	addParameter := func(key string, value string) {
 		if value != "" {
 			parameters.Add(key, value)
 		}
@@ -65,7 +67,7 @@ func FindUrl(request ItunesFindRequest) string {
 	}
 	Url.Path += "/lookup"
 	parameters := url.Values{}
-	addParameter := func(key String, value String) {
+	addParameter := func(key string, value string) {
 		if value != "" {
 			parameters.Add(key, value)
 		}
@@ -86,18 +88,34 @@ func FindUrl(request ItunesFindRequest) string {
 func ItunesSearch(request ItunesSearchRequest) ItunesResponse {
 	var url = SearchUrl(request)
 	res, err := http.Get(url)
+	var response ItunesResponse
+
 	if err != nil {
 		log.Println("An error occurred when making the request: ", err)
+		response.RawErr = append(response.RawErr, "An error occurred when making the request")
 	}
 	defer res.Body.Close()
 	contents, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		log.Println("An error occurred when getting the contents of the response: ", err)
+		response.RawErr = append(response.RawErr, "An error occurred when getting the contents of the response")
 	}
-	var response ItunesResponse
+
 	jsonerr := json.Unmarshal(contents, &response)
 	if jsonerr != nil {
 		log.Println("An error occurred unmarshaling the JSON: ", jsonerr)
+		response.RawErr = append(response.RawErr, "An error occurred unmarshaling the JSON")
+		//if len(contents) > 10 {
+		//	log.Println(contents)
+		//}
+		
+	}
+	
+	if ReturnExtra {
+    	response.RawContent = contents
+		response.RawStatus = res.StatusCode
+		response.RawHeader = res.Header
+		response.RawURL = url
 	}
 	return response
 }
@@ -119,6 +137,13 @@ func ItunesFind(request ItunesFindRequest) ItunesResponse {
 	jsonerr := json.Unmarshal(contents, &response)
 	if jsonerr != nil {
 		log.Println("An error occurred unmarshaling the JSON: ", jsonerr)
+	}
+	
+	if ReturnExtra {
+		response.RawContent = contents
+		response.RawStatus = res.StatusCode
+		response.RawHeader = res.Header
+		response.RawURL = url
 	}
 	return response
 }

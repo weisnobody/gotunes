@@ -1,11 +1,21 @@
 package gotunes
 
+import (
+	"time"
+)
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Response
 
 type ItunesResponse struct {
 	ResultCount int         `json:"resultCount"`
 	Results     ItunesItems `json:"results"`
+	RawContent  []byte      `'json:"-"`
+	RawHeader   map[string][]string    `'json:"-"`
+	RawStatus   int	        `'json:"-"`
+	RawURL      string      `'json:"-"`
+	RawErr      []string    `'json:"-"`
+	
 }
 
 type ItunesItem struct {
@@ -22,10 +32,13 @@ type ItunesItem struct {
 	CollectionCensoredName string  `json:"collectionCensoredName,omitempty"`
 	CollectionViewUrl      string  `json:"collectionViewUrl,omitempty"`
 	CollectionPrice        float32 `json:"collectionPrice,omitempty"`
+	CollectionType         string  `json:"collectionType,omitempty"`
 
 	ArtistId      int    `json:"artistId,omitempty"`
 	ArtistName    string `json:"artistName,omitempty"`
+	ArtistType    string `json:"artistType,omitempty"`
 	ArtistViewUrl string `json:"artistViewUrl,omitempty"`
+	ArtistLinkUrl string `json:"artistLinkUrl,omitempty"`
 
 	WrapperType           string `json:"wrapperType,omitempty"`
 	Kind                  string `json:"kind,omitempty"`
@@ -38,6 +51,14 @@ type ItunesItem struct {
 	DiscCount  int    `json:"discCount,omitempty"`
 	DiscNumber int    `json:"discNumber,omitempty"`
 	Currency   string `json:"currency,omitempty"`
+	
+	
+	// in books
+	Price        float32 `json:"price,omitempty"`
+	AverageUserRating string `json:"averageUserRating,omitempty"`
+	UserRatingCount string `json:"userRatingCount,omitempty"`
+
+	
 
 	PrimaryGenreName   string   `json:"primaryGenreName,omitempty"`
 	Genres             []string `json:"genres,omitempty"`
@@ -47,7 +68,8 @@ type ItunesItem struct {
 	Description        string   `json:"description,omitempty"`
 	LongDescription    string   `json:"longDescription,omitempty"`
 	Country            string   `json:"country,omitempty"`
-	ReleaseDate        string   `json:"releaseDate,omitempty"`
+	ReleaseDate        time.Time   `json:"releaseDate,omitempty"`
+	ArtworkUrl60       string   `json:"artworkUrl60,omitempty"`
 	ArtworkUrl100      string   `json:"artworkUrl100,omitempty"`
 	ArtworkUrl130      string   `json:"artworkUrl130,omitempty"`
 	ArtworkUrl160      string   `json:"artworkUrl160,omitempty"`
