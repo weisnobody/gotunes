@@ -10,11 +10,13 @@ import (
 type ItunesResponse struct {
 	ResultCount int         `json:"resultCount"`
 	Results     ItunesItems `json:"results"`
-	RawContent  []byte      `'json:"-"`
-	RawHeader   map[string][]string    `'json:"-"`
-	RawStatus   int	        `'json:"-"`
-	RawURL      string      `'json:"-"`
-	RawErr      []string    `'json:"-"`
+	Raw         struct{
+		Content  []byte      `'json:"-"`
+		Header   map[string][]string    `'json:"-"`
+		Status   int	        `'json:"-"`
+		Url      string      `'json:"-"`
+		Err      []string    `'json:"-"`
+	}
 	
 }
 
@@ -35,6 +37,7 @@ type ItunesItem struct {
 	CollectionType         string  `json:"collectionType,omitempty"`
 
 	ArtistId      int    `json:"artistId,omitempty"`
+	AmgArtistId   int    `json:"amgArtistId,omitempty"`
 	ArtistName    string `json:"artistName,omitempty"`
 	ArtistType    string `json:"artistType,omitempty"`
 	ArtistViewUrl string `json:"artistViewUrl,omitempty"`
@@ -52,6 +55,7 @@ type ItunesItem struct {
 	DiscNumber int    `json:"discNumber,omitempty"`
 	Currency   string `json:"currency,omitempty"`
 	
+	Copyright string `json:"copyright,omitempty"`
 	
 	// in books
 	Price        float32 `json:"price,omitempty"`
